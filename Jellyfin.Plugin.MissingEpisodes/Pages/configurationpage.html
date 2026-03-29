@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>Missing Episodes</title>
+</head>
+<body>
+<div id="MissingEpisodesConfigPage" data-role="page" class="page type-interior pluginConfigurationPage">
+    <div data-role="content">
+        <div class="content-primary">
+            <form class="missingEpisodesConfigForm">
+            <div class="verticalSection verticalSection-extrabottompadding">
+                <div class="sectionTitleContainer flex align-items-center">
+                    <h2 class="sectionTitle">Missing Episodes</h2>
+                </div>
+                <p>The list below shows episodes that Jellyfin has metadata for but are not present in your library files.</p>
+
+                <div class="inputContainer" style="max-width:400px;">
+                    <label for="librarySelect">Filter by Library:</label>
+                    <select id="librarySelect" is="emby-select" class="emby-select-withcolor emby-select">
+                        <option value="">All TV Libraries</option>
+                    </select>
+                </div>
+
+                <div class="inputContainer" style="max-width:400px;">
+                    <label for="searchInput">Filter results:</label>
+                    <input type="text" id="searchInput" is="emby-input" />
+                </div>
+
+                <div>
+                    <button is="emby-button" type="button" id="refreshBtn" class="raised button-submit block">
+                        <span>Refresh</span>
+                    </button>
+                </div>
+
+                <div id="loadingMsg" style="display:none; margin-top:1em;">
+                    <p>Loading...</p>
+                </div>
+
+                <div id="summarySection" style="display:none; margin-top:1em;">
+                    <p id="summaryText"></p>
+                </div>
+
+                <div id="noMissingMsg" style="display:none; margin-top:1em;">
+                    <p>&#10003; No missing episodes found!</p>
+                </div>
+
+                <div id="resultsSection" style="display:none; margin-top:1em;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left; padding:8px; border-bottom:1px solid #444;">Series</th>
+                                <th style="text-align:center; padding:8px; border-bottom:1px solid #444;">Season</th>
+                                <th style="text-align:center; padding:8px; border-bottom:1px solid #444;">Episode</th>
+                                <th style="text-align:left; padding:8px; border-bottom:1px solid #444;">Title</th>
+                                <th style="text-align:left; padding:8px; border-bottom:1px solid #444;">Premiere Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="episodeTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var MissingEpisodesConfig = {
+            allEpisodes: [],
+
+            escapeHtml: function (str) {
+                if (!str) return '';
+                return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            },
+
+            renderTable: function (episodes) {
+                var tbody = document.getElementById('episodeTableBody');
+                tbody.innerHTML = '';
+                episodes.forEach(function (ep) {
+                    var premiereText = '';
+                    if (ep.PremiereDate) {
+                        try { premiereText = new Date(ep.PremiereDate).toLocaleDateString(); }
+                        catch (e) { premiereText = ep.PremiereDate; }
+                    }
+                    var tr = document.createElement('tr');
+                    tr.innerHTML =
+                        '<td style="padding:6px 8px; border-bottom:1px solid #333;">' + MissingEpisodesConfig.escapeHtml(ep.SeriesName) + '</td>' +
+                        '<td style="padding:6px 8px; text-align:center; border-bottom:1px solid #333;">' + (ep.SeasonNumber != null ? ep.SeasonNumber : '?') + '</td>' +
+                        '<td style="padding:6px 8px; text-align:center; border-bottom:1px solid #333;">' + (ep.EpisodeNumber != null ? ep.EpisodeNumber : '?') + '</td>' +
+                        '<td style="padding:6px 8px; border-bottom:1px solid #333;">' + MissingEpisodesConfig.escapeHtml(ep.EpisodeName) + '</td>' +
+                        '<td style="padding:6px 8px; border-bottom:1px solid #333;">' + MissingEpisodesConfig.escapeHtml(premiereText) + '</td>';
+                    tbody.appendChild(tr);
+                });
+            },
+
+            loadLibraries: function () {
+                ApiClient.getJSON(ApiClient.getUrl('MissingEpisodes/Libraries')).then(function (libraries) {
+                    var select = document.getElementById('librarySelect');
+                    while (select.options.length > 1) select.remove(1);
+                    libraries.forEach(function (lib) {
+                        var option = document.createElement('option');
+                        option.value = lib.Id;
+                        option.textContent = lib.Name;
+                        select.appendChild(option);
+                    });
+                }).catch(function (err) {
+                    console.error('[MissingEpisodes] Failed to load libraries:', err);
+                });
+            },
+
+            loadEpisodes: function () {
+                var libraryId = document.getElementById('librarySelect').value;
+                var path = 'MissingEpisodes';
+                if (libraryId) path += '?libraryId=' + encodeURIComponent(libraryId);
+
+                document.getElementById('loadingMsg').style.display = '';
+                document.getElementById('resultsSection').style.display = 'none';
+                document.getElementById('noMissingMsg').style.display = 'none';
+                document.getElementById('summarySection').style.display = 'none';
+                document.getElementById('searchInput').value = '';
+
+                ApiClient.getJSON(ApiClient.getUrl(path)).then(function (episodes) {
+                    MissingEpisodesConfig.allEpisodes = episodes;
+                    document.getElementById('loadingMsg').style.display = 'none';
+
+                    if (!episodes || episodes.length === 0) {
+                        document.getElementById('noMissingMsg').style.display = '';
+                    } else {
+                        document.getElementById('summaryText').textContent =
+                            episodes.length + ' missing episode' + (episodes.length !== 1 ? 's' : '') + ' found.';
+                        document.getElementById('summarySection').style.display = '';
+                        MissingEpisodesConfig.renderTable(episodes);
+                        document.getElementById('resultsSection').style.display = '';
+                    }
+                }).catch(function (err) {
+                    document.getElementById('loadingMsg').style.display = 'none';
+                    console.error('[MissingEpisodes] Failed to load episodes:', err);
+                });
+            }
+        };
+
+        document.getElementById('MissingEpisodesConfigPage').addEventListener('pageshow', function () {
+            MissingEpisodesConfig.loadLibraries();
+            MissingEpisodesConfig.loadEpisodes();
+
+            document.getElementById('refreshBtn').addEventListener('click', function () {
+                MissingEpisodesConfig.loadEpisodes();
+            });
+
+            document.getElementById('searchInput').addEventListener('input', function () {
+                var lower = this.value.toLowerCase();
+                var filtered = MissingEpisodesConfig.allEpisodes.filter(function (ep) {
+                    return (ep.SeriesName || '').toLowerCase().indexOf(lower) !== -1 ||
+                        (ep.EpisodeName || '').toLowerCase().indexOf(lower) !== -1;
+                });
+                MissingEpisodesConfig.renderTable(filtered);
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
