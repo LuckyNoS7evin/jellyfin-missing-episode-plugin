@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Jellyfin.Plugin.MissingEpisodes</AssemblyName>
+    <RootNamespace>Jellyfin.Plugin.MissingEpisodes</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Jellyfin.Controller" Version="10.11.6" />
+    <PackageReference Include="Jellyfin.Model" Version="10.11.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\configurationpage.html" />
+    <EmbeddedResource Include="Pages\configurationpage.html" />
+    <None Remove="Web\missingepisodes.js" />
+    <EmbeddedResource Include="Web\missingepisodes.js" />
+    <None Remove="Web\dashboard-widget.html" />
+    <EmbeddedResource Include="Web\dashboard-widget.html" />
+  </ItemGroup>
+
+</Project>
