@@ -48,16 +48,6 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
                 MenuSection = "server",
                 MenuIcon = "video_library",
                 DisplayName = "Missing Episodes"
-            },
-            new PluginPageInfo
-            {
-                Name = "missingepisodes.js",
-                EmbeddedResourcePath = $"{GetType().Namespace}.Web.missingepisodes.js"
-            },
-            new PluginPageInfo
-            {
-                Name = "dashboard-widget.html",
-                EmbeddedResourcePath = $"{GetType().Namespace}.Web.dashboard-widget.html"
             }
         ];
     }
