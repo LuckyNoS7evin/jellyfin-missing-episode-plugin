@@ -10,11 +10,11 @@
     "versions": [
       {
         "version": "1.0.0.0",
-        "changelog": "create gh-pages",
+        "changelog": "Fix workflow conditional to use env var instead of secrets\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
         "targetAbi": "10.11.6.0",
         "sourceUrl": "https://luckynos7evin.github.io/jellyfin-missing-episode-plugin/releases/missing-episodes_1.0.0.0.zip",
-        "checksum": "995a36ee2b8405aa6ea4c885908f603f",
-        "timestamp": "2026-03-30T21:13:00+01:00"
+        "checksum": "0544ed6b14a4dcae662bcd21774ce1a5",
+        "timestamp": "2026-03-30T23:47:16+01:00"
       }
     ]
   }
