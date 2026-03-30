@@ -15,6 +15,8 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      JELLYFIN_PLUGINS_DISPATCH_TOKEN: ${{ secrets.JELLYFIN_PLUGINS_DISPATCH_TOKEN }}
 
     steps:
       - name: Checkout
@@ -144,8 +146,6 @@ jobs:
 
       - name: Trigger central manifest update
         if: ${{ env.JELLYFIN_PLUGINS_DISPATCH_TOKEN != '' }}
-        env:
-          JELLYFIN_PLUGINS_DISPATCH_TOKEN: ${{ secrets.JELLYFIN_PLUGINS_DISPATCH_TOKEN }}
         run: |
           curl -X POST \
             -H "Authorization: Bearer $JELLYFIN_PLUGINS_DISPATCH_TOKEN" \
