@@ -138,7 +138,7 @@ jobs:
           git push origin gh-pages
 
       - name: Trigger central manifest update
-        if: ${{ secrets.JELLYFIN_PLUGINS_DISPATCH_TOKEN != '' }}
+        if: ${{ env.JELLYFIN_PLUGINS_DISPATCH_TOKEN != '' }}
         env:
           JELLYFIN_PLUGINS_DISPATCH_TOKEN: ${{ secrets.JELLYFIN_PLUGINS_DISPATCH_TOKEN }}
         run: |
