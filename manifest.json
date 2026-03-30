@@ -1,0 +1,21 @@
+[
+  {
+    "guid": "3e7a8e72-8a85-4b2d-9f3c-1a2b3c4d5e6f",
+    "name": "Missing Episodes",
+    "description": "Displays a report of TV episodes missing from your library.",
+    "overview": "Displays a report of TV episodes missing from your library.",
+    "owner": "LuckyNoS7evin",
+    "category": "General",
+    "imageUrl": "",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "create gh-pages",
+        "targetAbi": "10.11.6.0",
+        "sourceUrl": "https://luckynos7evin.github.io/jellyfin-missing-episode-plugin/releases/missing-episodes_1.0.0.0.zip",
+        "checksum": "995a36ee2b8405aa6ea4c885908f603f",
+        "timestamp": "2026-03-30T21:13:00+01:00"
+      }
+    ]
+  }
+]
