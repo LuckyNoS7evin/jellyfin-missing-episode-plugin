@@ -153,6 +153,21 @@ jobs:
       - name: Trigger central manifest update
         if: ${{ env.JELLYFIN_PLUGINS_DISPATCH_TOKEN != '' }}
         run: |
+          BASE_URL="https://luckynos7evin.github.io/jellyfin-missing-episode-plugin"
+          VERSION="${{ steps.meta.outputs.version }}"
+
+          echo "Waiting for GitHub Pages to serve version $VERSION..."
+          for i in $(seq 1 20); do
+            sleep 15
+            LIVE=$(curl -sf "$BASE_URL/manifest.json" 2>/dev/null \
+              | jq -r --arg v "$VERSION" '.[] | .versions[] | select(.version == $v) | .version' 2>/dev/null || echo "")
+            if [ -n "$LIVE" ]; then
+              echo "Version $VERSION is live after $((i * 15))s"
+              break
+            fi
+            echo "Attempt $i/20: version $VERSION not yet live, retrying..."
+          done
+
           curl -X POST \
             -H "Authorization: Bearer $JELLYFIN_PLUGINS_DISPATCH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
