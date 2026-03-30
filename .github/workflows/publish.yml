@@ -102,6 +102,12 @@ jobs:
           fi
 
           mkdir -p releases
+
+          if [ -f "releases/$ZIP_NAME" ]; then
+            echo "Release $ZIP_NAME already exists, skipping overwrite."
+            exit 0
+          fi
+
           cp "/tmp/$ZIP_NAME" releases/
 
           if [ ! -f manifest.json ]; then
