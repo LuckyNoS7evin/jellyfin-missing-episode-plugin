@@ -10,10 +10,10 @@
     "versions": [
       {
         "version": "1.0.0.0",
-        "changelog": "Add workflow_dispatch and concurrency guard to prevent checksum races\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+        "changelog": "",
         "targetAbi": "10.11.6.0",
         "sourceUrl": "https://luckynos7evin.github.io/jellyfin-missing-episode-plugin/releases/missing-episodes_1.0.0.0.zip",
-        "checksum": "92355eb06731e75f5caf7b03dc0c8286",
+        "checksum": "94a5e8baa5c9051330e619b8a1eb24e5",
         "timestamp": "2026-03-30T23:53:18+01:00"
       }
     ]
