@@ -10,11 +10,11 @@
     "versions": [
       {
         "version": "1.0.0.0",
-        "changelog": "",
+        "changelog": "Fix dispatch step: move secret to job env so if condition evaluates correctly\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
         "targetAbi": "10.11.6.0",
         "sourceUrl": "https://luckynos7evin.github.io/jellyfin-missing-episode-plugin/releases/missing-episodes_1.0.0.0.zip",
-        "checksum": "94a5e8baa5c9051330e619b8a1eb24e5",
-        "timestamp": "2026-03-30T23:53:18+01:00"
+        "checksum": "9f94402097cba7f4e467a210b926a673",
+        "timestamp": "2026-03-31T00:02:03+01:00"
       }
     ]
   }
