@@ -26,6 +26,17 @@
                     <input type="text" id="searchInput" is="emby-input" />
                 </div>
 
+                <div class="inputContainer" style="max-width:400px; display:flex; gap:1.5em; align-items:center; flex-wrap:wrap;">
+                    <label style="display:flex; align-items:center; gap:0.4em; cursor:pointer;">
+                        <input type="checkbox" id="hideSpecialsCheckbox" is="emby-checkbox" />
+                        <span>Hide Specials</span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.4em; cursor:pointer;">
+                        <input type="checkbox" id="hideUnairedCheckbox" is="emby-checkbox" />
+                        <span>Hide unaired</span>
+                    </label>
+                </div>
+
                 <div>
                     <button is="emby-button" type="button" id="refreshBtn" class="raised button-submit block">
                         <span>Refresh</span>
@@ -249,7 +260,12 @@
             },
 
             applyFilter: function (lower) {
+                var hideSpecials = document.getElementById('hideSpecialsCheckbox').checked;
+                var hideUnaired = document.getElementById('hideUnairedCheckbox').checked;
+                var now = hideUnaired ? new Date() : null;
                 var filtered = MissingEpisodesConfig.allEpisodes.filter(function (ep) {
+                    if (hideSpecials && ep.SeasonNumber === 0) return false;
+                    if (hideUnaired && (!ep.PremiereDate || new Date(ep.PremiereDate) > now)) return false;
                     return (ep.SeriesName || '').toLowerCase().indexOf(lower) !== -1 ||
                         (ep.EpisodeName || '').toLowerCase().indexOf(lower) !== -1;
                 });
@@ -294,11 +310,8 @@
                     if (!episodes || episodes.length === 0) {
                         document.getElementById('noMissingMsg').style.display = '';
                     } else {
-                        document.getElementById('summaryText').textContent =
-                            episodes.length + ' missing episode' + (episodes.length !== 1 ? 's' : '') + ' found.';
                         document.getElementById('summarySection').style.display = '';
-                        MissingEpisodesConfig.renderGrouped(episodes);
-                        document.getElementById('resultsSection').style.display = '';
+                        MissingEpisodesConfig.applyFilter(document.getElementById('searchInput').value.toLowerCase());
                     }
                 }).catch(function (err) {
                     document.getElementById('loadingMsg').style.display = 'none';
@@ -309,6 +322,13 @@
 
         document.getElementById('MissingEpisodesConfigPage').addEventListener('pageshow', function () {
             MissingEpisodesConfig.loadLibraries();
+
+            var hideSpecialsCheckbox = document.getElementById('hideSpecialsCheckbox');
+            var hideUnairedCheckbox = document.getElementById('hideUnairedCheckbox');
+
+            hideSpecialsCheckbox.checked = localStorage.getItem('MissingEpisodes_hideSpecials') === 'true';
+            hideUnairedCheckbox.checked = localStorage.getItem('MissingEpisodes_hideUnaired') === 'true';
+
             MissingEpisodesConfig.loadEpisodes();
 
             document.getElementById('refreshBtn').addEventListener('click', function () {
@@ -317,6 +337,16 @@
 
             document.getElementById('searchInput').addEventListener('input', function () {
                 MissingEpisodesConfig.applyFilter(this.value.toLowerCase());
+            });
+
+            hideSpecialsCheckbox.addEventListener('change', function () {
+                localStorage.setItem('MissingEpisodes_hideSpecials', this.checked);
+                MissingEpisodesConfig.applyFilter(document.getElementById('searchInput').value.toLowerCase());
+            });
+
+            hideUnairedCheckbox.addEventListener('change', function () {
+                localStorage.setItem('MissingEpisodes_hideUnaired', this.checked);
+                MissingEpisodesConfig.applyFilter(document.getElementById('searchInput').value.toLowerCase());
             });
         });
     </script>
