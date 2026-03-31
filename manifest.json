@@ -9,6 +9,14 @@
     "imageUrl": "",
     "versions": [
       {
+        "version": "1.1.0.0",
+        "changelog": "Add persistent \"Hide Specials\" and \"Hide unaired\" filter checkboxes (#3)",
+        "targetAbi": "10.11.6.0",
+        "sourceUrl": "https://luckynos7evin.github.io/jellyfin-missing-episode-plugin/releases/missing-episodes_1.1.0.0.zip",
+        "checksum": "21b7240e9a19d57c8afbbac7defb7da6",
+        "timestamp": "2026-03-31T21:27:20+01:00"
+      },
+      {
         "version": "1.0.0.0",
         "changelog": "Fix dispatch step: move secret to job env so if condition evaluates correctly\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
         "targetAbi": "10.11.6.0",
